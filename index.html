@@ -62,12 +62,6 @@
       .orient-note{ font-size:12px; line-height:1.7; color:#9fc4ab; margin:8px auto 0; max-width:480px; }
       .sec-title{ font-size:21px; margin:34px 0 12px; border-left:5px solid var(--gold); padding-left:10px; color:var(--paper); }
       body:not(.in-game) .sec-title{ color:#f2ecd8; }
-      .card-dex{ display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:10px; }
-      .dex-item{ background:#0d3527; border:1px solid #2e5c47; border-radius:10px; padding:12px 13px; }
-      .dex-item .dn{ font-weight:900; font-size:15.5px; color:#ffe9a8; }
-      .dex-item .dk{ font-size:11px; font-weight:700; padding:1px 7px; border-radius:99px; margin-left:6px; vertical-align:2px; }
-      .dk-effect{ background:#7a4b12; color:#ffe1a1; } .dk-joke{ background:#274b63; color:#bfe2f5; } .dk-passive{ background:#4c3a63; color:#e2d2f5; }
-      .dex-item p{ margin:6px 0 0; font-size:13px; line-height:1.65; color:#cfe0d2; }
       .rules-box{ background:#0d3527; border:1px solid #2e5c47; border-radius:10px; padding:14px 18px; font-size:13.5px; line-height:1.9; color:#d8e6da; }
       .rules-box b{ color:#ffe9a8; }
       .voice-credit{ margin:22px auto 0; max-width:640px; text-align:center; font-size:12px; line-height:1.8; color:#9fc4ab; }
@@ -455,7 +449,7 @@
         #scoreStrip .seat-info{ flex:1 1 42%; }
         /* round info chips duplicate the center panel (残り/供託/本場) — hide them
            in portrait so the top bar stays one row and leaves room for the cards */
-        #topbar #tbScore, #topbar #tbHonba, #topbar #tbKyotaku, #topbar #tbWall{ display:none; }
+        #topbar #tbScore, #topbar #tbHonba, #topbar #tbKyotaku, #topbar #tbWall, #topbar #tbAka{ display:none; }
         /* own hand: fixed to the very bottom of the screen, large tappable tiles */
         #myHandStrip{
           position:fixed; left:0; right:0; bottom:0; z-index:40;
@@ -540,7 +534,7 @@
           text-overflow:ellipsis; color:#a9c2d8; font-size:11.5px; }
         #tbLog b{ color:#ffe9a8; }
         #topbar .spacer{ flex:0 0 0; }
-        #topbar #tbScore, #topbar #tbHonba, #topbar #tbKyotaku, #topbar #tbWall{ display:none; }
+        #topbar #tbScore, #topbar #tbHonba, #topbar #tbKyotaku, #topbar #tbWall, #topbar #tbAka{ display:none; }
         .dz{ padding:2px; gap:1px; }
         /* right column: action buttons stay at the top, cards below;
            only this column scrolls if a small screen cannot fit all 3 cards */
@@ -635,7 +629,7 @@
         body.land-forced #topbar .round-label{ font-size:15px; }
         body.land-forced #topbar .chip{ padding:1px 7px; }
         body.land-forced #topbar #tbScore, body.land-forced #topbar #tbHonba,
-        body.land-forced #topbar #tbKyotaku, body.land-forced #topbar #tbWall{ display:none; }
+        body.land-forced #topbar #tbKyotaku, body.land-forced #topbar #tbWall, body.land-forced #topbar #tbAka{ display:none; }
         body.land-forced #topbar .mini-btn{ min-height:28px; padding:3px 9px; font-size:12px; white-space:nowrap; }
         body.land-forced #tableWrap{ grid-row:2; grid-column:1; flex:none; min-height:0; min-width:0; padding:6px; }
         body.land-forced #table{ width:100%; height:100%; aspect-ratio:auto; margin:0; border-width:6px; }
@@ -747,6 +741,15 @@
           <button class="orient-btn" id="btnNetCreate" type="button">ルームを作る</button>
         </div>
         <div class="online-row">
+          <label for="netAkaSel">赤ドラ（ホストが設定）：</label>
+          <select id="netAkaSel">
+            <option value="0">なし（0枚）</option>
+            <option value="3">3枚（5萬1・5筒1・5索1）</option>
+            <option value="5" selected>5枚（5萬1・5筒2・5索2）</option>
+            <option value="12">全部（5は全て赤・12枚）</option>
+          </select>
+        </div>
+        <div class="online-row">
           <label for="netCodeInput">コードで参加する：</label>
           <input id="netCodeInput" type="text" maxlength="6" placeholder="例：AB3K9Z" autocomplete="off" />
           <button class="orient-btn" id="btnNetJoin" type="button">参加する</button>
@@ -755,16 +758,14 @@
         <p class="online-note">コードを知っている人だけが参加できます。無料の公開中継サーバーを使います</p>
       </div>
 
-      <h2 class="sec-title">イベントカード図鑑（全21種）</h2>
-      <div class="card-dex" id="cardDex"></div>
-
       <h2 class="sec-title">ルール</h2>
       <div class="rules-box">
         <p>・<b>牌は2回タップで切ります。</b>1回目のタップで牌が「選択中」になり、その牌を切った場合の結果（テンパイなら待ち牌と残り枚数）が表示されます。もう一度同じ牌をタップすると実際に切ります。別の牌をタップすると選択がそちらに移ります。<b>リーチした後はツモった牌が自動で捨てられます</b>（タップ不要。ツモ・カン・抜き北が選べるときはボタンが出て、選ばなければツモ牌を捨てます）。<br />
         ・<b>カードは各局3枚ずつ</b>全員に配られます。<b>効果カードは1局に1回まで</b>使用可能。笑えるカード（演出系）は効果カードの回数に数えません。<br />
         ・<b>演出系カードは「使う」を押してセットしたときだけ発動</b>します。持っているだけでは何も起きません。セットしなければ、その局は普通の麻雀になります。<br />
         ・「大掃除」「今日は素手で勝負」はCPUもたまに使ってきます。CPUの手持ちカードは見えませんが、使えば演出で分かります。<br />
-        ・リーチは1000点、喰いタン・後付けあり、赤ドラ（5萬・5筒・5索に各1枚）、裏ドラ・一発あり。ダブルリーチ／流し満貫／途中流局はなし。<br />
+        ・リーチは1000点、喰いタン・後付けあり、裏ドラ・一発あり。ダブルリーチ／流し満貫／途中流局はなし。<br />
+        ・<b>赤ドラ</b>は1人用では<b>5枚</b>（5萬1枚・5筒2枚・5索2枚）固定です。オンライン対戦ではホストがルーム作成時に「なし（0枚）／3枚（5萬・5筒・5索に各1枚）／5枚（5萬1枚・5筒2枚・5索2枚）／全部（5は全て赤・合計12枚）」から選べて、設定はロビーと対局中（卓の中央と上部バー）に表示され、参加者全員に同じ設定が適用されます。三麻では萬子の赤は入りません（全部なら5筒・5索が各4枚）。<br />
         ・三麻はチーなし、北は「抜き北」でドラ扱い（1枚1翻）。フリテンあり（自分の捨て牌に待ち牌があるとロンできません）。<br />
         ・親がアガるかテンパイで流局すると連荘。本場1本につき300点。供託のリーチ棒はアガった人が総取りします。<br />
         ・「相手の捨て牌を手牌に戻す」ようなカードは、牌の枚数やフリテンと衝突するため入れていません。普通の麻雀の骨格はそのままです。<br />
@@ -784,12 +785,12 @@
         <span class="chip" id="tbHonba">0本場</span>
         <span class="chip" id="tbKyotaku">供託 0</span>
         <span class="chip" id="tbWall">残り 0</span>
+        <span class="chip" id="tbAka">赤ドラ 5枚</span>
         <span class="chip" id="tbScore">あなた 25000</span>
         <span class="spacer"></span>
         <button class="mini-btn" id="btnVoice" type="button" aria-pressed="true">🔊 音声ON</button>
         <button class="mini-btn" id="btnBgm" type="button" aria-pressed="true">🎵 BGM ON</button>
         <button class="mini-btn orient-toggle" id="btnOrientGame" type="button">横画面</button>
-        <button class="mini-btn" id="btnDex">カード図鑑</button>
         <button class="mini-btn" id="btnQuit">タイトルへ</button>
       </div>
       <div id="tableWrap">
@@ -1548,12 +1549,36 @@
       p.minogashiArmed = false; p.hanabiArmed = false; p.rainbowArmed = false; p.kinenArmed = false;
       p.usedEffect = false; p.cpuCardChecked = false; p.justDrawnUid = null;
     }
-    function buildWall(mode){
+    // Red-dora (aka) presets, keyed by total count in yonma. Red tiles
+    // REPLACE normal 5s, so the wall total never changes. Sanma uses the
+    // same presets; man tiles 2-8 do not exist there, so the man red is
+    // simply absent (preset 12 = four red 5-pin + four red 5-sou).
+    const AKA_PRESETS = {
+      0:  { total: 0,  man: 0, pin: 0, sou: 0, label: 'なし（0枚）' },
+      3:  { total: 3,  man: 1, pin: 1, sou: 1, label: '3枚（赤5萬×1・赤5筒×1・赤5索×1）' },
+      5:  { total: 5,  man: 1, pin: 2, sou: 2, label: '5枚（赤5萬×1・赤5筒×2・赤5索×2）' },
+      12: { total: 12, man: 4, pin: 4, sou: 4, label: '全部（5は全て赤・12枚）' }
+    };
+    const AKA_DEFAULT = 5; // solo CPU games are fixed to this preset
+    // Any value (UI, saved state, or an untrusted network message) is
+    // funnelled through here: only the four preset keys survive.
+    function akaPresetKey(v){
+      const n = Number(v);
+      return Object.prototype.hasOwnProperty.call(AKA_PRESETS, n) ? n : AKA_DEFAULT;
+    }
+    function akaPreset(v){ return AKA_PRESETS[akaPresetKey(v)]; }
+    function akaShortLabel(v){
+      const k = akaPresetKey(v);
+      return k === 0 ? 'なし・0枚' : k === 12 ? '全部・12枚' : k + '枚';
+    }
+    function buildWall(mode, akaKey){
+      const preset = akaPreset(akaKey);
       const tiles = [];
       for(let t = 0; t < 34; t++){
         if(mode === 3 && t >= 1 && t <= 7) continue; // sanma: no 2-8 man
         for(let k = 0; k < 4; k++){
-          const red = (k === 0) && (t === 4 || t === 13 || t === 22) && !(mode === 3 && t === 4);
+          const redCount = t === 4 ? preset.man : t === 13 ? preset.pin : t === 22 ? preset.sou : 0;
+          const red = k < redCount && !(mode === 3 && t === 4);
           tiles.push(mkTile(t, red));
         }
       }
@@ -1571,15 +1596,21 @@
         p.cards.push({ id, used: false });
       }
     }
-    function startGame(mode){
+    function startGame(mode, akaKey){
       viewSeat = 0; // host & offline always view from seat 0
       selectedUid = null; previewUid = null; // no held tile carries into a new game
       unlockVoice(); // called from the mode button tap: unlocks audio on iOS
       startBgm(); // same tap: BGM starts with the game (never on the title screen)
       const n = mode;
       const start = mode === 3 ? 35000 : 25000;
+      // Red-dora preset resolution: an explicit argument wins, then the
+      // online room's host-chosen setting, then the previous game's
+      // setting (final-screen rematch), else the fixed solo default.
+      const aka = akaPresetKey(akaKey != null ? akaKey
+        : (NET && NET.akaPreset != null ? NET.akaPreset
+        : (G && G.akaPreset != null ? G.akaPreset : AKA_DEFAULT)));
       G = {
-        mode, n, players: [], dealer: 0, handNum: 0, honba: 0, kyotaku: 0,
+        mode, n, akaPreset: aka, players: [], dealer: 0, handNum: 0, honba: 0, kyotaku: 0,
         wall: [], deadWall: [], doraIndTiles: [], uraIndTiles: [], doraCount: 1, kanCount: 0,
         noCards: false, handActive: false, modalOpen: false, allowTileClick: false,
         turnIdx: -1, log: '', gameOver: false
@@ -1600,7 +1631,7 @@
       lastYakumanTenpaiStatus = null; yakumanTenpaiCache = { key: null, status: null }; // yakuman-tenpai intro re-arms each hand
       const n = G.n;
       for(const p of G.players){ resetPlayerForHand(p); dealCards(p); }
-      const wall = buildWall(G.mode);
+      const wall = buildWall(G.mode, G.akaPreset);
       G.deadWall = wall.splice(wall.length - 14, 14);
       G.wall = wall;
       G.doraIndTiles = [G.deadWall[2], G.deadWall[4], G.deadWall[6], G.deadWall[8], G.deadWall[10]];
@@ -1709,6 +1740,7 @@
       $('tbHonba').textContent = G.honba + '本場';
       $('tbKyotaku').textContent = '供託 ' + (G.kyotaku * 1000);
       $('tbWall').textContent = '残り ' + G.wall.length;
+      $('tbAka').textContent = '赤ドラ ' + akaShortLabel(G.akaPreset);
       $('tbScore').textContent = (VP() ? VP().name : 'あなた') + ' ' + (VP() ? VP().score : 0) + '点';
       // center panel: round / wind / dora / remaining tiles
       const cp = $('centerPanel');
@@ -1722,7 +1754,7 @@
         '<div class="cp-sub">親：' + escHtml(dealerP.name) + '（' + ['東','南','西','北'][dealerP.seat] + '家）</div>' +
         '<div class="dora-row">' + doraHtml + '</div>' +
         '<div class="cp-sub">ドラ表示牌</div>' +
-        '<div class="cp-chips"><span>残り <b>' + G.wall.length + '</b></span><span>供託 <b>' + (G.kyotaku * 1000) + '</b></span></div>' +
+        '<div class="cp-chips"><span>残り <b>' + G.wall.length + '</b></span><span>供託 <b>' + (G.kyotaku * 1000) + '</b></span><span>赤ドラ <b>' + akaShortLabel(G.akaPreset) + '</b></span></div>' +
         (G.noCards ? '<div class="cp-sub" style="color:#ff9c8a;font-weight:900">🥊 素手勝負中（カード使用不可）</div>' : '');
       // board zones: hand backs on each edge, discards in front of each player,
       // melds in each player's corner, avatar+name+score near each edge.
@@ -3467,7 +3499,7 @@
         return pub;
       });
       return {
-        kind: 'state', mode: G.mode, n: G.n, dealer: G.dealer, handNum: G.handNum,
+        kind: 'state', mode: G.mode, n: G.n, akaPreset: akaPresetKey(G.akaPreset), dealer: G.dealer, handNum: G.handNum,
         honba: G.honba, kyotaku: G.kyotaku, wallLen: G.wall.length,
         doraInds: G.doraIndTiles.slice(0, G.doraCount).map(serTile),
         doraCount: G.doraCount, kanCount: G.kanCount, noCards: G.noCards,
@@ -3730,8 +3762,10 @@
     function lobbySeatsHtml(){
       const isHost = NET.role === 'host';
       const mode = isHost ? NET.mode : ((NET.lobbyState && NET.lobbyState.mode) || 4);
+      const aka = isHost ? NET.akaPreset : (NET.lobbyState && NET.lobbyState.akaPreset != null ? NET.lobbyState.akaPreset : NET.akaPreset);
       const humans = isHost ? NET.humans : new Set(NET.lobbyState ? NET.lobbyState.humans : []);
-      let rows = '';
+      let rows = '<div class="lobby-seat"><span>対局</span><b>' + (mode === 3 ? '三麻' : '四麻') + '</b></div>' +
+        '<div class="lobby-seat"><span>赤ドラ</span><b>' + escHtml(akaPreset(aka).label) + '</b></div>';
       for(let s = 0; s < mode; s++){
         let label;
         if(s === 0) label = 'ホスト（人間）';
@@ -3744,7 +3778,7 @@
     function renderLobbySeats(){ const el = $('lobbySeats'); if(el) el.innerHTML = lobbySeatsHtml(); }
     function netPublishLobbyState(){
       if(!NET || NET.role !== 'host') return;
-      netPublishLobby({ kind: 'lobbyState', mode: NET.mode, humans: Array.from(NET.humans), started: NET.started });
+      netPublishLobby({ kind: 'lobbyState', mode: NET.mode, akaPreset: akaPresetKey(NET.akaPreset), humans: Array.from(NET.humans), started: NET.started });
     }
     function showLobby(){
       const isHost = NET.role === 'host';
@@ -3763,7 +3797,7 @@
       if(startBtn) startBtn.onclick = () => {
         if(!NET || NET.role !== 'host') return;
         NET.started = true;
-        netPublishLobby({ kind: 'gameStarting' });
+        netPublishLobby({ kind: 'gameStarting', akaPreset: akaPresetKey(NET.akaPreset) });
         closeNetModal();
         startGame(NET.mode);
       };
@@ -3779,7 +3813,8 @@
     async function netCreateRoom(){
       if(NET){ toast('すでにオンライン接続中です'); return; }
       const mode = +($('netModeSel').value || 4);
-      NET = { role: 'host', code: randomRoomCode(), clientId: netClientId(), client: null, mode: mode,
+      const aka = akaPresetKey($('netAkaSel') ? $('netAkaSel').value : AKA_DEFAULT);
+      NET = { role: 'host', code: randomRoomCode(), clientId: netClientId(), client: null, mode: mode, akaPreset: aka,
         humans: new Set(), seatByClient: {}, lastSeen: {}, promptSeq: 0, pendingRemote: null,
         started: false, timers: [], lobbyOpen: false, bcTimer: null };
       viewSeat = 0;
@@ -3877,7 +3912,7 @@
       if(NET){ toast('すでにオンライン接続中です'); return; }
       const code = ($('netCodeInput').value || '').trim().toUpperCase();
       if(code.length !== 6){ netStatus('6文字のルームコードを入力してください'); return; }
-      NET = { role: 'guest', code: code, clientId: netClientId(), client: null, mySeat: null,
+      NET = { role: 'guest', code: code, clientId: netClientId(), client: null, mySeat: null, akaPreset: null,
         started: false, timers: [], lastHostSeen: Date.now(), resultModalOpen: false,
         cardWaiter: null, dead: false, lobbyOpen: false, lobbyState: null, currentPid: null };
       try{ NET.client = await netConnect(); }
@@ -3922,7 +3957,11 @@
         if(msg.kind === 'hostAlive' || msg.kind === 'lobbyState') NET.lastHostSeen = Date.now();
         if(msg.kind === 'lobbyState'){
           NET.lobbyState = msg;
+          if(msg.akaPreset != null) NET.akaPreset = akaPresetKey(msg.akaPreset); // untrusted: preset keys only
           if(NET.lobbyOpen && NET.mySeat != null) renderLobbySeats();
+        }
+        else if(msg.kind === 'gameStarting' && msg.akaPreset != null){
+          NET.akaPreset = akaPresetKey(msg.akaPreset);
         }
         else if(msg.kind === 'joined' && msg.clientId === NET.clientId && NET.mySeat == null){
           NET.mySeat = msg.seat;
@@ -3963,12 +4002,14 @@
       const keepModal = G ? G.modalOpen : false;
       const wasShown = G && !$('gameScreen').hidden;
       if(!G){
-        G = { mode: s.mode, n: s.n, players: [], dealer: 0, handNum: 0, honba: 0, kyotaku: 0,
+        G = { mode: s.mode, n: s.n, akaPreset: AKA_DEFAULT, players: [], dealer: 0, handNum: 0, honba: 0, kyotaku: 0,
           wall: [], deadWall: [], doraIndTiles: [], uraIndTiles: [], doraCount: 1, kanCount: 0,
           noCards: false, handActive: false, modalOpen: false, allowTileClick: false,
           turnIdx: -1, log: '', gameOver: false };
       }
       G.mode = s.mode; G.n = s.n; G.dealer = s.dealer; G.handNum = s.handNum;
+      G.akaPreset = akaPresetKey(s.akaPreset); // host's setting, sanitized to a preset key
+      if(NET) NET.akaPreset = G.akaPreset;
       G.honba = s.honba; G.kyotaku = s.kyotaku;
       G.wall = new Array(s.wallLen).fill(null);
       G.doraCount = s.doraCount; G.kanCount = s.kanCount; G.noCards = s.noCards;
@@ -4214,16 +4255,7 @@
     $('btnNetCreate').addEventListener('click', () => { unlockVoice(); netCreateRoom(); });
     $('btnNetJoin').addEventListener('click', () => { unlockVoice(); netJoinRoom(); });
 
-    // ---------- dex / init ----------
-    function dexHtml(){
-      let html = '<div class="card-dex">';
-      for(const c of CARDS){
-        const tag = c.kind === 'effect' ? '<span class="dk dk-effect">効果</span>' : '<span class="dk dk-joke">演出・セット式</span>';
-        html += '<div class="dex-item"><span class="dn">' + c.icon + ' ' + c.name + '</span>' + tag + '<p>' + c.desc + '</p></div>';
-      }
-      return html + '</div>';
-    }
-    $('cardDex').innerHTML = dexHtml();
+    // ---------- init ----------
     window.__debugKadoma = {
       getG: () => G, CARDS: CARDS, CARD_VOICE_FILES: CARD_VOICE_FILES,
       waitShapes: waitShapes, yakumanLevel: yakumanLevel,
@@ -4234,7 +4266,9 @@
       playFireworks: playFireworks, spawnConfetti: spawnConfetti,
       tryEvaluate: tryEvaluate, doTsumo: doTsumo, doRon: doRon,
       minogashiAlert: minogashiAlert, currentWaits: currentWaits,
-      tileName: tileName, doraFromIndicator: doraFromIndicator, declareRiichi: declareRiichi
+      tileName: tileName, doraFromIndicator: doraFromIndicator, declareRiichi: declareRiichi,
+      buildWall: buildWall, akaPresetKey: akaPresetKey, akaPreset: akaPreset, AKA_PRESETS: AKA_PRESETS,
+      buildSnapshot: buildSnapshot, lobbySeatsHtml: lobbySeatsHtml, getNET: () => NET
     };
     calibrateTileGlyphs();
     if(document.fonts && document.fonts.ready) document.fonts.ready.then(() => calibrateTileGlyphs());
@@ -4249,11 +4283,6 @@
       else stopVoice();
     });
     $('btnBgm').addEventListener('click', () => setBgmOn(!bgmOn));
-    $('btnDex').addEventListener('click', () => {
-      if(G) G.modalOpen = true;
-      const m = showModal('<h2>イベントカード図鑑</h2>' + dexHtml() + '<p class="voice-credit">音声：Style-Bert-VITS2 モデル『あみたろ』（<a href="https://amitaro.net/" target="_blank" rel="noopener" style="color:#ffe9a8">あみたろの声素材工房 https://amitaro.net/</a> の声を元にした音声モデル）を使用しています</p><p class="voice-credit">BGM：甘茶の音楽工房（<a href="https://amachamusic.chagasi.com/" target="_blank" rel="noopener" style="color:#ffe9a8">https://amachamusic.chagasi.com/</a>）『桜雲』『テクノフォビア』</p>' + '<div class="btn-row"><button class="primary-btn" data-x>閉じる</button></div>');
-      m.querySelector('[data-x]').onclick = () => closeModal();
-    });
     $('btnQuit').addEventListener('click', () => {
       const m = showModal('<h2>タイトルへ戻る</h2><p>対局を中断してタイトルに戻りますか？</p><div class="btn-row"><button class="primary-btn" data-yes>戻る</button><button class="ghost-btn" data-no>対局を続ける</button></div>');
       m.querySelector('[data-yes]').onclick = () => { closeModal(); backToTitle(); };
