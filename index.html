@@ -16,7 +16,7 @@
         --felt:#0e4d3a; --felt2:#083325; --wood:#2a1c10; --gold:#c9a227; --gold2:#e8c95a;
         --ink:#1c1a14; --paper:#f7f2df; --page:#12211a; --page-ink:#eef3ea;
         --panel:#173b2e; --panel-line:#2e5c47; --accent:#d4553a; --info:#7fc4a8;
-        --tile-w: clamp(30px, 6.4vmin, 46px);
+        --tile-w: clamp(32px, 7vmin, 54px);
         --dt: clamp(15px, 3.1vmin, 23px);
         color-scheme: dark;
       }
@@ -210,8 +210,8 @@
       .tile.revealed{ outline:2px solid #ffb03a; outline-offset:-2px; }
       .tile.revealed::before{ content:"👁"; position:absolute; left:0; top:0; font-size:9px; z-index:2; }
       .tile.t-xl{ width:var(--tile-w); height:calc(var(--tile-w)*1.38); font-size:calc(var(--tile-w)*1.04); border-radius:5px; }
-      .tile.t-md{ --dt: clamp(19px, 4vmin, 28px); }
-      .tile.t-sm{ --dt: clamp(13px, 2.6vmin, 19px); }
+      .tile.t-md{ --dt: clamp(20px, 4.4vmin, 31px); }
+      .tile.t-sm{ --dt: clamp(14px, 2.8vmin, 20px); }
       .tile.just-drawn{ box-shadow:0 0 0 2px var(--gold2), 0 2px 5px #000a; }
       /* the newest discard in each pond is ringed in gold so it reads at a glance */
       .tile.latest{ box-shadow:0 0 0 2px #ffd94d, 0 0 9px #ffd94dbb, inset 0 -2px 0 #cbbd93; z-index:2; }
@@ -236,7 +236,7 @@
       #myHand .tile.discardable.selected::after{
         content:"選択中"; position:absolute; left:50%; bottom:1px; transform:translateX(-50%);
         font-size:8px; font-weight:900; letter-spacing:.02em; white-space:nowrap; line-height:1.5;
-        background:var(--gold); color:#241a02; border-radius:99px; padding:0 5px; z-index:4;
+        background:var(--gold); color:#241a02; border-radius:99px; padding:0 3px; z-index:4;
       }
       .tile.disabled{ opacity:.55; cursor:not-allowed; }
       .tile.disabled:hover{ transform:none; }
@@ -396,7 +396,7 @@
         .pcard{ width:calc(50% - 5px); }
         .center-panel{ width:min(40vmin, 210px); padding:6px 8px; }
         .center-panel .cp-round{ font-size:16px; }
-        :root{ --tile-w: clamp(23px, 6.3vw, 30px); --dt: clamp(13px, 4.4vw, 17px); }
+        :root{ --tile-w: clamp(24px, 6.6vw, 34px); --dt: clamp(13px, 4.4vw, 17px); }
         .seat-info{ font-size:11px; padding:2px 7px 2px 3px; gap:4px; }
         .wind-badge{ width:20px; height:20px; font-size:11px; }
         .avatar{ width:21px; height:21px; font-size:11px; }
@@ -411,11 +411,14 @@
       }
       /* ---------- Portrait phones: square table, hand fixed at screen bottom ---------- */
       @media (orientation: portrait) and (max-width: 700px){
-        /* hand tiles get the physical maximum width: 14 tiles + 13 gaps of 1px
-           + the 6px drawn-tile gap + 2px strip padding on each side = 24px of
-           overhead, everything else goes to the tiles. 36px cap keeps big
-           portrait tablets sane; landscape / PC keep their own caps. */
-        :root{ --tile-w: min(36px, calc((100vw - 24px) / 14)); --dt: clamp(16px, 4.6vw, 21px); --dts: clamp(13.5px, 3.95vw, 18px); }
+        /* hand tiles get the physical maximum width: the tiles touch each
+           other (gap 0, like real tiles on a rail), the only overhead is the
+           4px drawn-tile gap plus a 2px rounding guard = 6px, everything
+           else goes to the 14 tiles. The 42px cap only binds on wide
+           portrait tablets; landscape / PC keep their own caps. Discard
+           tiles also grow (--dt): a 4-row pond then just fits between the
+           panel edge (+68px) and the table edge at phone sizes. */
+        :root{ --tile-w: min(42px, calc((100vw - 6px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)) / 14)); --dt: clamp(17px, 4.9vw, 22px); --dts: clamp(13.5px, 3.95vw, 18px); }
         /* the whole game column scrolls if it ever outgrows the screen, and the
            bottom area reserves the fixed hand strip's height inside itself,
            so the event cards can never end up hidden underneath the hand */
@@ -435,7 +438,7 @@
         .center-panel .dora-row{ margin:4px 0 1px; }
         .center-panel .dora-row .tile{ --dt:17px; }
         .hz-top{ top:2px; }
-        .back-slot{ width:20px; height:17px; }
+        .back-slot{ width:21px; height:18px; }
         /* ponds get dedicated rectangles: top/bottom ponds hang off the
            panel's edges and grow outward; side ponds start just inside the
            hand-back columns and grow toward the panel, slightly smaller
@@ -457,10 +460,10 @@
         #myHandStrip{
           position:fixed; left:0; right:0; bottom:0; z-index:40;
           background:linear-gradient(#101c2bf5, #0a141f); border-top:2px solid var(--gold);
-          padding:7px 2px calc(7px + env(safe-area-inset-bottom));
+          padding:7px env(safe-area-inset-right, 0px) calc(7px + env(safe-area-inset-bottom)) env(safe-area-inset-left, 0px);
         }
-        #myHand{ gap:1px; padding-top:10px; }
-        #myHand .gap{ width:6px; }
+        #myHand{ gap:0; padding-top:10px; }
+        #myHand .gap{ width:4px; }
         #myHand .tile{ min-height:calc(var(--tile-w)*1.38); }
         /* draw the face glyph larger than the tile box (its ink sits well
            inside the em), so pips and characters stay readable */
@@ -491,11 +494,14 @@
          landscape phone (740x360 ... 932x430) and in-app-browser chrome
          changes are followed automatically, including on rotation. ---------- */
       @media (orientation: landscape) and (max-height: 540px) and (max-width: 1100px){
-        /* hand tile width = whatever the screen width leaves after strip
-           padding, the 13 gaps and the drawn-tile gap, capped at 68px */
+        /* hand tile width = the physical maximum: tiles touch (gap 0), the
+           only width overhead is the 4px drawn-tile gap + a 2px rounding
+           guard. The width is also capped by height ((100dvh - 286px)/1.38
+           keeps the table at least as tall as before on very short screens)
+           and by an 84px sanity cap that only binds on wide tablets. */
         :root{
-          --tile-w: min(68px, calc((100vw - 30px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)) / 14));
-          --dt: clamp(11px, 3.1vh, 14px);
+          --tile-w: min(84px, calc((100vw - 6px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)) / 14), calc((100dvh - 286px) / 1.38));
+          --dt: clamp(12px, 3.3vh, 15px);
         }
         #gameScreen{
           display:grid; height:100dvh; overflow:hidden;
@@ -557,10 +563,10 @@
         #myHandStrip{
           position:fixed; left:0; right:0; bottom:0; z-index:40;
           background:linear-gradient(#101c2bf5, #0a141f); border-top:2px solid var(--gold);
-          padding:6px calc(2px + env(safe-area-inset-right, 0px)) calc(6px + env(safe-area-inset-bottom, 0px)) calc(2px + env(safe-area-inset-left, 0px));
+          padding:6px env(safe-area-inset-right, 0px) calc(6px + env(safe-area-inset-bottom, 0px)) env(safe-area-inset-left, 0px);
         }
-        #myHand{ gap:1px; padding-top:9px; }
-        #myHand .gap{ width:6px; }
+        #myHand{ gap:0; padding-top:9px; }
+        #myHand .gap{ width:4px; }
         #myHand .tile.t-xl{ font-size:calc(var(--tile-w)*1.1); }
         /* table internals tuned for the short, wide table */
         .center-panel{ width:190px; height:104px; padding:5px 7px; display:flex; flex-direction:column; justify-content:center; }
@@ -589,7 +595,10 @@
          landscape viewport keeps using the media query above. ---------- */
       @media (orientation: portrait){
         body.land-forced{ overflow:hidden;
-          --tile-w: min(68px, calc((100dvh - 30px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)) / 14));
+          /* same physical-maximum sizing as real landscape: the frame's long
+             side (100dvh) feeds the width, its short side (100dvw) caps the
+             height so the table keeps its previous minimum height */
+          --tile-w: min(84px, calc((100dvh - 6px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)) / 14), calc((100dvw - 286px) / 1.38));
           --dt: clamp(11px, 3.1dvh, 14px);
         }
         body.land-forced #titleScreen{
@@ -663,10 +672,10 @@
         body.land-forced #myHandStrip{
           position:fixed; left:0; right:0; bottom:0; z-index:40;
           background:linear-gradient(#101c2bf5, #0a141f); border-top:2px solid var(--gold);
-          padding:6px calc(2px + env(safe-area-inset-right, 0px)) calc(6px + env(safe-area-inset-bottom, 0px)) calc(2px + env(safe-area-inset-left, 0px));
+          padding:6px env(safe-area-inset-right, 0px) calc(6px + env(safe-area-inset-bottom, 0px)) env(safe-area-inset-left, 0px);
         }
-        body.land-forced #myHand{ gap:1px; padding-top:9px; }
-        body.land-forced #myHand .gap{ width:6px; }
+        body.land-forced #myHand{ gap:0; padding-top:9px; }
+        body.land-forced #myHand .gap{ width:4px; }
         body.land-forced #myHand .tile.t-xl{ font-size:calc(var(--tile-w)*1.1); }
         body.land-forced .center-panel{ width:190px; height:104px; padding:5px 7px; display:flex; flex-direction:column; justify-content:center; }
         body.land-forced .center-panel .cp-round{ font-size:16px; }
